@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ISTANBUL GROOMING CO. | NISHMAN & KABUTO</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+        :root { --gold: #D4AF37; --neon-red: #ff0000; }
+        body { font-family: 'Oswald', sans-serif; color: #fff; background: #050505; margin: 0; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
+        
+        /* Fondo con efecto Ken Burns */
+        body::before { 
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.92)), url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80&w=2074&auto=format&fit=crop'); 
+            background-size: cover; background-position: center; z-index: -2; 
+            animation: kenBurns 60s infinite alternate linear; 
+        }
+        @keyframes kenBurns { 0% { transform: scale(1); } 100% { transform: scale(1.1); } }
+
+        .katana-pulse { color: var(--neon-red); text-shadow: 0 0 10px var(--neon-red); animation: neonPulse 1.5s infinite alternate ease-in-out; }
+        @keyframes neonPulse { 0% { opacity: 0.8; transform: scale(1); } 100% { opacity: 1; transform: scale(1.03); } }
+
+        .led-flash { background: #ff0000; animation: ledBlink 0.8s infinite alternate; color: white; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; position: absolute; top: 10px; left: 10px; z-index: 10; box-shadow: 0 0 10px #ff0000; }
+        @keyframes ledBlink { 0% { opacity: 1; } 100% { opacity: 0.5; } }
+
+        .glass-card { background: rgba(20, 20, 20, 0.9); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; overflow: hidden; transition: 0.3s; }
+        .nav-glass { background: rgba(0, 0, 0, 0.95); border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+
+        .cat-btn { background: rgba(255, 255, 255, 0.1); border: 1px solid #444; border-radius: 50px; padding: 6px 15px; font-size: 11px; transition: 0.3s; color: #ccc; white-space: nowrap; }
+        .cat-btn.active { background: var(--gold); color: #000; border-color: var(--gold); transform: scale(1.05); }
+
+        .hide { display: none !important; }
+
+        /* León Emoji Palpitante */
+        .lion-emoji { font-size: 3.5rem; animation: lionPulse 2s infinite ease-in-out; cursor: pointer; user-select: none; filter: drop-shadow(0 0 10px rgba(212,175,55,0.5)); line-height: 1; }
+        @keyframes lionPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+
+        .pay-btn { flex: 1; padding: 10px; border-radius: 12px; font-weight: bold; font-size: 8px; text-transform: uppercase; border: 1px solid #333; background: #111; color: #777; transition: 0.2s; }
+        .pay-btn.active { background: var(--gold); color: #000; border-color: var(--gold); }
+
+        .bundle-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; background: rgba(0,0,0,0.5); padding: 5px; border-radius: 8px; margin: 10px 0; }
+        .bundle-grid img { width: 100%; height: 35px; object-fit: contain; }
+
+        ::-webkit-scrollbar { width: 0px; }
+    </style>
+</head>
+<body>
+
+    <!-- Navegación -->
+    <nav class="fixed top-0 w-full z-50 nav-glass px-4 py-3">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div onclick="app.setView('shop')" class="cursor-pointer leading-none">
+                <span class="text-xl font-bold tracking-widest block uppercase">ISTANBUL</span>
+                <span class="text-[9px] font-bold text-[#D4AF37] tracking-[0.4em] uppercase">GROOMING CO.</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="app.toggleCurrency()" id="btn-curr" class="text-[10px] font-bold border border-gray-600 px-3 py-1 rounded text-[#D4AF37]">₪ ILS</button>
+                <div class="flex bg-gray-900 rounded border border-gray-700 overflow-hidden">
+                    <button onclick="app.setLang('es')" id="l-es" class="px-2 py-1 text-[10px] font-bold bg-white text-black">ES</button>
+                    <button onclick="app.setLang('en')" id="l-en" class="px-2 py-1 text-[10px] text-gray-400">EN</button>
+                    <button onclick="app.setLang('he')" id="l-he" class="px-2 py-1 text-[10px] text-gray-400">HE</button>
+                </div>
+                <div onclick="app.toggleCart()" class="relative p-2 cursor-pointer">
+                    <i class="fa-solid fa-cart-shopping text-xl text-gray-300"></i>
+                    <span id="badge" class="absolute -top-1 -right-1 bg-[#D4AF37] text-black text-[9px] font-bold w-4 h-4 flex items-center justify-center rounded-full">0</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido -->
+    <main class="pt-24 px-4 max-w-7xl mx-auto pb-32">
+        <section id="view-shop">
+            <header class="text-center py-6">
+                <h1 class="text-5xl font-bold leading-none uppercase">NISHMAN & KABUTO</h1>
+                <h2 class="text-4xl font-bold katana-pulse mt-2 tracking-widest uppercase" style="font-family: 'Orbitron';">KATANA</h2>
+                <p id="txt-hero-sub" class="text-gray-400 text-[10px] uppercase tracking-widest mt-2">Distribuidor Oficial Exclusivo</p>
+                <button onclick="app.setView('b2b')" class="bg-[#D4AF37] text-black px-6 py-2 rounded-full font-bold uppercase text-[10px] mt-6 shadow-lg active:scale-95 transition">VENTAS AL MAYOR</button>
+            </header>
+
+            <div class="mb-10">
+                <h3 id="txt-combo-title" class="text-center text-[#D4AF37] text-sm font-bold uppercase mb-4 tracking-widest">PAQUETES PROFESIONALES (OFFER)</h3>
+                <div id="combo-grid" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+            </div>
+
+            <div class="sticky top-[60px] z-40 bg-black/80 backdrop-blur-md py-3 mb-6 border-y border-gray-800 overflow-x-auto no-scrollbar">
+                <div id="cats-container" class="flex gap-2 px-4 min-w-max"></div>
+            </div>
+
+            <div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+        </section>
+
+        <!-- Formulario B2B -->
+        <section id="view-b2b" class="hide py-12">
+            <div class="max-w-xl mx-auto glass-card p-6 border-t-4 border-[#D4AF37]">
+                <h2 class="text-xl font-bold text-center mb-6 uppercase">ZONA DISTRIBUIDOR</h2>
+                <div class="space-y-4">
+                    <input type="text" id="in-b2b-name" placeholder="Nombre de Contacto" class="w-full bg-[#111] border border-gray-700 p-4 rounded-xl text-sm text-white outline-none">
+                    <input type="text" id="in-b2b-city" placeholder="Ciudad / Barbería" class="w-full bg-[#111] border border-gray-700 p-4 rounded-xl text-sm text-white outline-none">
+                    <textarea id="in-b2b-desc" placeholder="Mensaje / ¿Qué productos te interesan?" rows="3" class="w-full bg-[#111] border border-gray-700 p-4 rounded-xl text-sm text-white outline-none"></textarea>
+                    <button onclick="app.handleB2B()" class="w-full bg-[#D4AF37] text-black font-bold py-4 rounded-xl text-xs uppercase shadow-xl active:scale-95 transition">ENVIAR SOLICITUD</button>
+                </div>
+                <button onclick="app.setView('shop')" class="mt-4 w-full text-xs text-gray-500 uppercase text-center">VOLVER</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black/95 border-t border-gray-900 text-center py-10">
+        <div class="flex justify-center gap-8 mb-4">
+            <a href="https://www.facebook.com/profile.php?id=61585384787535" target="_blank" class="text-2xl text-[#D4AF37]"><i class="fa-brands fa-facebook"></i></a>
+            <a href="https://www.instagram.com/istambulgroomingco/" target="_blank" class="text-2xl text-[#D4AF37]"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://wa.me/12136761753" target="_blank" class="text-2xl text-[#D4AF37]"><i class="fa-brands fa-whatsapp"></i></a>
+        </div>
+        <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Victor Carrión - Gerente General</p>
+    </footer>
+
+    <!-- León Asistente -->
+    <div id="lion-container" class="fixed bottom-6 right-6 z-[100] flex flex-col items-end">
+        <div id="robot-msg" class="bg-white text-black p-4 rounded-2xl rounded-br-none shadow-2xl mb-2 text-[11px] font-bold max-w-[200px] hide">
+            <div id="robot-content"></div>
+        </div>
+        <div onclick="app.toggleLion()" class="lion-emoji" role="button">🦁</div>
+    </div>
+
+    <!-- Modal Carrito -->
+    <div id="cart-modal" class="fixed inset-0 bg-black/95 z-[60] hide flex flex-col justify-end">
+        <div class="w-full max-w-lg mx-auto bg-[#0a0a0a] h-[95vh] rounded-t-[40px] flex flex-col border-t-2 border-[#D4AF37] shadow-2xl overflow-hidden">
+            <div class="p-5 border-b border-gray-900 flex justify-between items-center bg-black">
+                <h2 id="txt-cart-title" class="text-lg font-bold text-[#D4AF37] uppercase">CARRITO</h2>
+                <button onclick="app.toggleCart()" class="text-gray-400 text-2xl p-2"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="flex-1 overflow-y-auto p-5 space-y-6 pb-40">
+                <div id="cart-items" class="space-y-3"></div>
+                <div class="space-y-3 pt-4 border-t border-gray-900">
+                    <input type="text" id="cust-name" placeholder="Nombre Completo" class="w-full bg-[#111] border border-gray-800 p-3 rounded-xl text-sm text-white focus:border-[#D4AF37] outline-none">
+                    <input type="text" id="cust-addr" placeholder="Dirección en Israel" class="w-full bg-[#111] border border-gray-800 p-3 rounded-xl text-sm text-white focus:border-[#D4AF37] outline-none">
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="app.setPayment('bit')" id="pay-bit" class="pay-btn active">BIT / PAYBOX</button>
+                        <button onclick="app.setPayment('card')" id="pay-card" class="pay-btn">PAYPAL / LINK</button>
+                        <button onclick="app.setPayment('cash')" id="pay-cash" class="pay-btn">EFECTIVO</button>
+                        <button onclick="app.setPayment('transfer')" id="pay-transfer" class="pay-btn">TRANSFERENCIA</button>
+                    </div>
+                    <div id="payment-details" class="bg-[#0f0f0f] p-3 rounded-xl border border-gray-800 text-[10px] italic text-[#D4AF37]"></div>
+                </div>
+            </div>
+            <div class="absolute bottom-0 left-0 w-full p-5 bg-black border-t border-gray-900">
+                <div class="flex justify-between items-center mb-3">
+                    <span id="txt-total-label" class="text-xs text-gray-400 font-bold uppercase">TOTAL</span>
+                    <span id="final-total" class="text-3xl font-bold text-[#D4AF37]">0 ₪</span>
+                </div>
+                <button onclick="app.checkout()" class="w-full py-4 rounded-xl text-xs font-bold uppercase bg-[#D4AF37] text-black active:scale-95 transition">CONFIRMAR PEDIDO WHATSAPP</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sonidos -->
+    <audio id="snd-add" src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3"></audio>
+
+    <script>
+        const app = {
+            whatsapp: "12136761753", 
+            rate: 3.8, 
+            lang: 'es', 
+            curr: 'ILS', 
+            cart: [], 
+            payMethod: 'bit',
+            
+            bundles: [
+                { id:'b1', n:'🥉 PACK BÁSICO', p:120, old:140, i:'https://i.ibb.co/fd7XDP0h/image.jpg', imgs: ['https://i.ibb.co/fd7XDP0h/image.jpg', 'https://i.ibb.co/JWLQ100r/image.jpg'], d:{es:'2 Ceras Nishman.', en:'2 Nishman Waxes.', he:'2 ווקס נישמן.'} },
+                { id:'b2', n:'🥈 PACK BARBER PRO', p:220, old:260, i:'https://i.ibb.co/JWLQ100r/image.jpg', imgs: ['https://i.ibb.co/JWLQ100r/image.jpg', 'https://i.ibb.co/5h9yL9X/image.jpg', 'https://i.ibb.co/23H4KxBp/image.jpg'], d:{es:'4 Ceras + Shampoo.', en:'4 Waxes + Shampoo.', he:'4 ווקס + שמפו.'}, r:true },
+                { id:'b3', n:'🥇 FULL KATANA', p:350, old:420, i:'https://i.ibb.co/fV85Ftrt/image.jpg', imgs: ['https://i.ibb.co/fV85Ftrt/image.jpg', 'https://i.ibb.co/84BzXkzK/image.jpg', 'https://i.ibb.co/9mz9mwSz/image.jpg', 'https://i.ibb.co/23H4KxBp/image.jpg', 'https://i.ibb.co/ZRd9499Y/image.jpg', 'https://i.ibb.co/JWLQ100r/image.jpg'], d:{es:'6 Prod + Regalo.', en:'6 Products + Gift.', he:'6 מוצרים + מתנה.'} }
+            ],
+            db: [
+                {id:1, c:'wax', p:65, v:'150ml', i:'https://i.ibb.co/fd7XDP0h/image.jpg', n:{es:'Nishman 01 Gumgum',en:'Nishman 01 Gumgum',he:'נישמן 01 גאם-גאם'}, d:{es:'Brillo Alto - Aroma Chicle',en:'High Shine - Bubblegum',he:'ברק גבוה - מסטיק'}},
+                {id:2, c:'wax', p:65, v:'150ml', i:'https://i.ibb.co/JWLQ100r/image.jpg', n:{es:'Nishman 02 Sport',en:'Nishman 02 Sport',he:'נישמן 02 ספורט'}, d:{es:'Brillo Alto - Aroma Sport',en:'High Shine - Sport Scent',he:'ברק גבוה - ספורט'}},
+                {id:4, c:'wax', p:70, v:'150ml', i:'https://i.ibb.co/JWLQ100r/image.jpg', n:{es:'Kabuto Katana Grey',en:'Kabuto Katana Grey',he:'קאבוטו קטאנה אפור'}, d:{es:'Mate Fuerte - Arcilla',en:'Strong Matte - Clay',he:'מאט חזק - חימר'}},
+                {id:5, c:'beard', p:55, v:'75ml', i:'https://i.ibb.co/84BzXkzK/image.jpg', n:{es:'Aceite Barba Gold',en:'Gold Beard Oil',he:'שמן זקן גולד'}, d:{es:'Nutrición Argan',en:'Argan Nutrition',he:'הזנה ארגן'}},
+                {id:6, c:'scent', p:50, v:'400ml', i:'https://i.ibb.co/ZRd9499Y/image.jpg', n:{es:'Colonia No.11',en:'Cologne No.11',he:'קולוניה מס 11'}, d:{es:'Aroma Fresco',en:'Fresh Scent',he:'ניחוח רענן'}},
+                {id:7, c:'powder', p:60, v:'20g', i:'https://i.ibb.co/fV85Ftrt/image.jpg', n:{es:'Styling Powder P1',en:'Styling Powder P1',he:'פודרת עיצוב P1'}, d:{es:'Volumen Mate',en:'Matte Volume',he:'נפח מאט'}},
+                {id:9, c:'wash', p:70, v:'1000ml', i:'https://i.ibb.co/23H4KxBp/image.jpg', n:{es:'Shampoo Keratina',en:'Keratin Shampoo',he:'שמפו קרטין'}, d:{es:'Sin Sal - 1 Litro',en:'Salt Free - 1 Liter',he:'ללא מלח - 1 ליטר'}}
+            ],
+            texts: {
+                es: { cart:"CARRITO", sub:"Distribuidor Oficial Exclusivo", comboTitle:"PAQUETES PROFESIONALES", lionHello:"Soy Leo, tu asistente. ¿En qué te ayudo?", l1:"📦 Envíos", l2:"💰 Pagos", l3:"📍 Ubicación", cats:{all:"TODO", wax:"CERAS", beard:"BARBA", scent:"AROMAS", powder:"POLVO", wash:"SHAMPOO"} },
+                en: { cart:"CART", sub:"Exclusive Official Distributor", comboTitle:"PROFESSIONAL PACKAGES", lionHello:"I'm Leo, your assistant. How can I help?", l1:"📦 Shipping", l2:"💰 Payment", l3:"📍 Location", cats:{all:"ALL", wax:"WAXES", beard:"BEARD", scent:"SCENTS", powder:"POWDER", wash:"SHAMPOO"} },
+                he: { cart:"עגלה", sub:"מפיץ רשמי בלעדי", comboTitle:"חבילות מקצועיות", lionHello:"אני לאו, העוזר שלך. איך לעזור?", l1:"📦 משלוחים", l2:"💰 תשלום", l3:"📍 מיקום", cats:{all:"הכל", wax:"ווקס", beard:"זקן", scent:"ניחוחות", powder:"פודרה", wash:"שמפו"} }
+            },
+
+            init: function() { 
+                this.setLang('es'); 
+                this.setPayment('bit'); 
+                this.renderCombos();
+                this.renderGrid();
+            },
+
+            setLang: function(l) { 
+                this.lang = l; 
+                document.body.dir = (l==='he')?'rtl':'ltr'; 
+                this.updateUI(); 
+            },
+
+            updateUI: function() {
+                const t = this.texts[this.lang];
+                document.getElementById('txt-hero-sub').innerText = t.sub;
+                document.getElementById('txt-cart-title').innerText = t.cart;
+                document.getElementById('txt-combo-title').innerText = t.comboTitle;
+                document.getElementById('cust-name').placeholder = this.lang === 'es' ? "Nombre Completo" : (this.lang==='he'?"שם מלא":"Full Name");
+                document.getElementById('cust-addr').placeholder = this.lang === 'es' ? "Dirección en Israel" : (this.lang==='he'?"כתובת בישראל":"Address in Israel");
+                
+                const cats = document.getElementById('cats-container');
+                cats.innerHTML = Object.keys(t.cats).map(c => `<button onclick="app.filter('${c}')" id="cat-${c}" class="cat-btn ${c==='all'?'active':''}">${t.cats[c]}</button>`).join('');
+                
+                this.renderCombos(); 
+                this.renderGrid(); 
+                this.renderCart();
+            },
+
+            renderCombos: function() {
+                const grid = document.getElementById('combo-grid');
+                grid.innerHTML = this.bundles.map(b => `
+                    <div class="glass-card p-4 relative border-2 ${b.r?'border-[#D4AF37]':'border-gray-800'}">
+                        <div class="led-flash">SAVE 15%</div>
+                        <div class="bundle-grid mt-6">${b.imgs.map(s=>`<img src="${s}">`).join('')}</div>
+                        <h3 class="text-white font-bold text-center text-sm uppercase">${b.n}</h3>
+                        <p class="text-[10px] text-gray-400 text-center mb-2">${b.d[this.lang]}</p>
+                        <div class="flex justify-between items-center bg-black/50 p-2 rounded-lg mt-2">
+                            <div>
+                                <span class="text-xs text-gray-500 line-through mr-1">${this.fmt(b.old)}</span>
+                                <span class="text-lg font-bold text-[#D4AF37]">${this.fmt(b.p)}</span>
+                            </div>
+                            <button onclick="app.addBundle('${b.id}')" class="bg-[#D4AF37] text-black px-3 py-1 rounded-full font-bold text-[9px] uppercase active:scale-95 transition">+ AGREGAR</button>
+                        </div>
+                    </div>`).join('');
+            },
+
+            fmt: function(p) { return (this.curr==='ILS')?`${p} ₪`:`$${(p/this.rate).toFixed(2)}`; },
+            
+            toggleCurrency: function() { 
+                this.curr=(this.curr==='ILS')?'USD':'ILS'; 
+                document.getElementById('btn-curr').innerText=this.curr==='ILS'?'₪ ILS':'$ USD'; 
+                this.updateUI(); 
+            },
+
+            filter: function(c) { 
+                document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active')); 
+                const btn = document.getElementById('cat-'+c);
+                if(btn) btn.classList.add('active'); 
+                this.renderGrid(); 
+            },
+
+            renderGrid: function() {
+                const activeBtn = document.querySelector('.cat-btn.active');
+                const c = activeBtn ? activeBtn.id.replace('cat-','') : 'all';
+                const list = (c==='all') ? this.db : this.db.filter(x=>x.c===c);
+                const grid = document.getElementById('product-grid');
+                grid.innerHTML = list.map(p => `
+                    <div class="glass-card flex flex-col h-full">
+                        <div class="h-44 bg-black/40 flex justify-center items-center p-3 relative">
+                            <img src="${p.i}" class="h-36 object-contain drop-shadow-2xl">
+                            <span class="absolute top-2 right-2 bg-black/60 text-white text-[9px] px-2 py-1 rounded font-bold">${p.v}</span>
+                        </div>
+                        <div class="p-3 flex-1 flex flex-col">
+                            <h3 class="text-white font-bold text-xs uppercase">${p.n[this.lang]}</h3>
+                            <p class="text-[9px] text-gray-400 mb-2 italic flex-1">${p.d[this.lang]}</p>
+                            <div class="flex justify-between items-center mt-auto border-t border-gray-800 pt-2">
+                                <span class="text-sm font-bold text-[#D4AF37]">${this.fmt(p.p)}</span>
+                                <button onclick="app.add(${p.id})" class="bg-[#D4AF37] text-black px-3 py-1 rounded-full text-[9px] font-bold active:scale-95 transition">AGREGAR</button>
+                            </div>
+                        </div>
+                    </div>`).join('');
+            },
+
+            add: function(id) { 
+                const audio = document.getElementById('snd-add');
+                if(audio) audio.play().catch(()=>{}); 
+                const p=this.db.find(x=>x.id===id); 
+                const ex=this.cart.find(x=>x.id===id); 
+                if(ex) ex.qty++; else this.cart.push({...p,qty:1,isBundle:false}); 
+                this.renderCart(); 
+            },
+
+            addBundle: function(id) { 
+                const audio = document.getElementById('snd-add');
+                if(audio) audio.play().catch(()=>{}); 
+                const b=this.bundles.find(x=>x.id===id); 
+                const ex=this.cart.find(x=>i.id===id); // correccion de busqueda de id
+                if(this.cart.some(i => i.id === id)) {
+                   this.cart.find(i => i.id === id).qty++;
+                } else {
+                   this.cart.push({...b,qty:1,isBundle:true}); 
+                }
+                this.renderCart(); 
+                this.toggleCart(true); 
+            },
+
+            renderCart: function() {
+                const badge = document.getElementById('badge');
+                if(badge) badge.innerText=this.cart.reduce((a,b)=>a+b.qty,0);
+                const list=document.getElementById('cart-items');
+                if(!this.cart.length) list.innerHTML=`<p class="text-center py-10 opacity-50 text-xs">Carrito vacío</p>`;
+                else list.innerHTML=this.cart.map((i,x)=>`
+                    <div class="flex gap-3 bg-[#111] p-3 rounded-2xl items-center border border-gray-800">
+                        <img src="${i.i}" class="w-10 h-10 object-contain">
+                        <div class="flex-1 text-left">
+                            <div class="text-[9px] text-white font-bold uppercase">${i.isBundle?i.n:i.n[this.lang]}</div>
+                            <div class="text-[11px] text-[#D4AF37] font-bold">${i.qty} x ${this.fmt(i.p)}</div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="app.mod(${x},-1)" class="w-7 h-7 bg-gray-800 rounded-full text-white">-</button>
+                            <span class="text-xs font-bold">${i.qty}</span>
+                            <button onclick="app.mod(${x},1)" class="w-7 h-7 bg-gray-800 rounded-full text-white">+</button>
+                        </div>
+                    </div>`).join('');
+                
+                const total = this.cart.reduce((a,b)=>a+(b.p*b.qty),0);
+                document.getElementById('final-total').innerText=this.fmt(total);
+                this.renderUpsell();
+            },
+
+            renderUpsell: function() {
+                const available = this.db.filter(p => !this.cart.some(c=>c.id===p.id));
+                const shuffle = available.sort(() => 0.5 - Math.random()).slice(0, 2);
+                const grid = document.getElementById('upsell-grid');
+                if(grid) grid.innerHTML = shuffle.map(p => `
+                    <div class="bg-[#111] p-2 rounded-xl border border-gray-900 flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <img src="${p.i}" class="h-8 object-contain">
+                            <div class="text-[9px] text-white uppercase font-bold truncate max-w-[70px]">${p.n[this.lang]}</div>
+                        </div>
+                        <button onclick="app.add(${p.id})" class="text-[#D4AF37]"><i class="fa-solid fa-plus-circle"></i></button>
+                    </div>`).join('');
+            },
+
+            mod: function(i,d) { 
+                this.cart[i].qty+=d; 
+                if(this.cart[i].qty<=0) this.cart.splice(i,1); 
+                this.renderCart(); 
+            },
+
+            toggleCart: function(f) { 
+                const m=document.getElementById('cart-modal'); 
+                if(f === true) m.classList.remove('hide'); 
+                else if(f === false) m.classList.add('hide');
+                else m.classList.toggle('hide'); 
+            },
+
+            toggleLion: function() {
+                const msg=document.getElementById('robot-msg'); 
+                const t=this.texts[this.lang];
+                if(msg.classList.contains('hide')) {
+                    document.getElementById('robot-content').innerHTML=`
+                        <p class="mb-2 text-[#D4AF37] font-bold">${t.lionHello}</p>
+                        <div class="flex flex-col gap-1">
+                            <button onclick="app.robotReply(1)" class="bg-gray-100 px-2 py-2 rounded text-[9px] text-black text-left font-bold border-b border-gray-300 hover:bg-[#D4AF37]">${t.l1}</button>
+                            <button onclick="app.robotReply(2)" class="bg-gray-100 px-2 py-2 rounded text-[9px] text-black text-left font-bold border-b border-gray-300 hover:bg-[#D4AF37]">${t.l2}</button>
+                            <button onclick="app.robotReply(3)" class="bg-gray-100 px-2 py-2 rounded text-[9px] text-black text-left font-bold hover:bg-[#D4AF37]">${t.l3}</button>
+                        </div>`;
+                    msg.classList.remove('hide');
+                } else { msg.classList.add('hide'); }
+            },
+
+            robotReply: function(o) { 
+                const t = this.texts[this.lang];
+                let resp = "";
+                if(o===1) resp = "🚀 Gratis sobre 300₪. Local 10km gratis.";
+                else if(o===2) resp = "💳 Bit, PayBox, PayPal o Cash.";
+                else resp = "📍 Tel Aviv, Israel y Envíos a todo el país.";
+                document.getElementById('robot-content').innerHTML = `<p class="text-[10px] text-black font-bold p-2">${resp}</p><button onclick="app.toggleLion()" class="text-[8px] uppercase mt-2 text-gray-500">Cerrar</button>`; 
+            },
+
+            setView: function(v) { 
+                document.getElementById('view-shop').classList.add('hide'); 
+                document.getElementById('view-b2b').classList.add('hide'); 
+                document.getElementById('view-'+v).classList.remove('hide'); 
+                window.scrollTo(0,0);
+            },
+
+            setPayment: function(t) {
+                this.payMethod=t; 
+                const d=document.getElementById('payment-details');
+                ['bit','card','cash','transfer'].forEach(m => { 
+                    const b=document.getElementById('pay-'+m); 
+                    if(b) b.className=m===t?"pay-btn active":"pay-btn"; 
+                });
+                const msgs = {
+                    bit: "📱 Pago por Bit o PayBox al recibir.",
+                    card: "💳 Enviaremos link de PayPal/Pago seguro.",
+                    cash: "💵 Efectivo al recibir en mano.",
+                    transfer: "🏦 Enviaremos datos IBAN para transferencia."
+                };
+                d.innerHTML = msgs[t];
+                d.classList.remove('hide');
+            },
+
+            checkout: function() {
+                const ni=document.getElementById('cust-name'); 
+                const ai=document.getElementById('cust-addr');
+                const n=ni.value.trim(); 
+                const a=ai.value.trim();
+                if(!n||!a) { 
+                    ni.classList.add('input-error'); 
+                    ai.classList.add('input-error');
+                    alert("Por favor completa nombre y dirección"); 
+                    return; 
+                }
+                if(!this.cart.length) { alert("Tu carrito está vacío"); return; }
+                
+                let list=""; 
+                this.cart.forEach(i=>{ list+=`• ${i.qty}x ${i.isBundle?i.n:i.n.es}%0A`; });
+                const totalText = document.getElementById('final-total').innerText;
+                const m=`🦁 *PEDIDO ISTANBUL*%0A👤 *CLIENTE:* ${n}%0A📍 *DIR:* ${a}%0A📦 *ITEMS:*%0A${list}%0A💰 *TOTAL:* ${totalText}%0A💳 *PAGO:* ${this.payMethod.toUpperCase()}`;
+                
+                window.location.href=`https://wa.me/${this.whatsapp}?text=${encodeURIComponent(m)}`;
+            },
+
+            handleB2B: function() {
+                const n=document.getElementById('in-b2b-name').value; 
+                const c=document.getElementById('in-b2b-city').value;
+                const d=document.getElementById('in-b2b-desc').value;
+                if(!n||!c) { alert("Por favor completa nombre y ciudad"); return; }
+                const m=`💼 *DISTRIBUIDOR*%0A👤 *Nombre:* ${n}%0A📍 *Ciudad:* ${c}%0A📝 *Nota:* ${d}`;
+                window.location.href=`https://wa.me/${this.whatsapp}?text=${encodeURIComponent(m)}`;
+            }
+        };
+
+        // Iniciar App
+        window.onload = () => app.init();
+    </script>
+</body>
+</html>
+
